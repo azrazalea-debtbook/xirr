@@ -1,7 +1,19 @@
 # frozen_string_literal: true
 
+require 'active_support/ordered_options'
+
 module Xirr
-  include ActiveSupport::Configurable
+  # Stands in for ActiveSupport::Configurable, which Rails 8.1 deprecates and
+  # Rails 8.2 removes; OrderedOptions is what Configurable's config was built on.
+  # @return [ActiveSupport::OrderedOptions]
+  def self.config
+    @config ||= ActiveSupport::OrderedOptions.new
+  end
+
+  # @yieldparam config [ActiveSupport::OrderedOptions]
+  def self.configure
+    yield config
+  end
 
   # Default configuration. Each entry becomes both a config setting
   # (+Xirr.config.eps+) and a frozen constant of the same name upcased
